@@ -1,24 +1,84 @@
-#include <bits/stdc++.h>
-using namespace std;
+/* ==== 문제 ====
+[01715] 카드 정렬하기 (골드 4)
+[문제]
+정렬된 두 묶음의 숫자 카드가 있다고 하자. 
+각 묶음의 카드의 수를 A, B라 하면 보통 두 묶음을 합쳐서 
+하나로 만드는 데에는 A+B 번의 비교를 해야 한다. 
+이를테면, 20장의 숫자 카드 묶음과 30장의 숫자 카드 묶음을 합치려면 
+50번의 비교가 필요하다.
 
-int main() 
+매우 많은 숫자 카드 묶음이 책상 위에 놓여 있다. 
+이들을 두 묶음씩 골라 서로 합쳐나간다면, 
+고르는 순서에 따라서 비교 횟수가 매우 달라진다. 
+예를 들어 10장, 20장, 40장의 묶음이 있다면 10장과 20장을 합친 뒤,
+합친 30장 묶음과 40장을 합친다면 
+(10 + 20) + (30 + 40) = 100번의 비교가 필요하다. 
+그러나 10장과 40장을 합친 뒤, 합친 50장 묶음과 20장을 합친다면 
+(10 + 40) + (50 + 20) = 120 번의 비교가 필요하므로 덜 효율적인 방법이다.
+
+N개의 숫자 카드 묶음의 각각의 크기가 주어질 때, 
+최소한 몇 번의 비교가 필요한지를 구하는 프로그램을 작성하시오.
+
+[입력]
+첫째 줄에 N이 주어진다. (1 ≤ N ≤ 100,000) 
+이어서 N개의 줄에 걸쳐 숫자 카드 묶음의 각각의 크기가 주어진다. 
+숫자 카드 묶음의 크기는 1,000보다 작거나 같은 양의 정수이다.
+
+[출력]
+첫째 줄에 최소 비교 횟수를 출력한다.
+
+========================
+
+[예제 입력 1]
+3
+10
+20
+40
+
+[예제 출력 1]
+100
+
+========================
+
+[알고리즘 분류]
+- 자료 구조
+- 그리디 알고리즘
+- 우선순위 큐
+*/
+
+/* [풀이]
+1. 카드의 비교횟수를 값으로 꾸준히 오름차순으로 정렬한다.
+2. 가장 낮은 두 값을 카드에서 빼고, 두 값의 합을 카드에 넣는다.
+
+3. 값이 1개가 될 때 해당 값을 출력한다.
+*/
+
+#include <bits/stdc++.h>	// STL / gcc
+using namespace std;		// STL
+
+
+int main()
 {
-	ios::sync_with_stdio(0), cin.tie(0);
-	int n, tmp, sum = 0;
-	multiset<int> card;
+	ios::sync_with_stdio(0), cin.tie(0); // boj 입출력 속도 개선
+	int n, sum = 0; // n : 몇 회 입력? / sum : 전체 비교 누적치
 	cin >> n;
-	while(n--){
-		cin >> tmp;
-		card.insert(tmp);
+	
+	// multiset<int> : 중복값 허용, 오름차순 정렬 유지
+	multiset<int> card; 
+	
+	while(n--){ 	// n회 입력
+		int input;
+		cin >> input; // 입력값
+		card.insert(input); // multiset에 삽입
 	}
 
-	while (card.size() > 1) {
-		tmp = *(card.begin());
-		card.erase(card.begin());
-		tmp += *(card.begin());
-		card.erase(card.begin());
-		sum += tmp;
-		card.insert(tmp);
+	while (card.size() > 1) { 		// 값이 1개 초과라면
+		int cur = *(card.begin()); 	// 가장 앞의 값 추출
+		card.erase(card.begin()); 	// 해당 값 제거
+		cur += *(card.begin()); 	// 그 다음 값 추출 후 더하기
+		card.erase(card.begin()); 	// 해당 값 제거
+		sum += cur;					// 두 값의 합만큼 누적치에 더하기
+		card.insert(cur);			// 두 값의 합을 card에 추가
 	}
-	cout << sum;
+	cout << sum;	// 누적치 출력
 }
