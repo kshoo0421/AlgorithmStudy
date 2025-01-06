@@ -1,24 +1,135 @@
+/* ==== 문제 ====
+[01715] 카드 정렬하기 (골드 4)
+[문제]
+민식이는 수학학원에서 단어 수학 문제를 푸는 숙제를 받았다.
+
+단어 수학 문제는 N개의 단어로 이루어져 있으며, 
+각 단어는 알파벳 대문자로만 이루어져 있다. 
+이때, 각 알파벳 대문자를 0부터 9까지의 숫자 중 하나로 바꿔서 
+N개의 수를 합하는 문제이다. 
+같은 알파벳은 같은 숫자로 바꿔야 하며, 
+두 개 이상의 알파벳이 같은 숫자로 바뀌어지면 안 된다.
+
+예를 들어, GCF + ACDEB를 계산한다고 할 때, 
+A = 9, B = 4, C = 8, D = 6, E = 5, F = 3, G = 7로 결정한다면, 
+두 수의 합은 99437이 되어서 최대가 될 것이다.
+
+N개의 단어가 주어졌을 때, 
+그 수의 합을 최대로 만드는 프로그램을 작성하시오.
+
+[입력]
+첫째 줄에 단어의 개수 N(1 ≤ N ≤ 10)이 주어진다. 
+둘째 줄부터 N개의 줄에 단어가 한 줄에 하나씩 주어진다. 
+단어는 알파벳 대문자로만 이루어져있다. 
+모든 단어에 포함되어 있는 알파벳은 최대 10개이고, 
+수의 최대 길이는 8이다. 
+서로 다른 문자는 서로 다른 숫자를 나타낸다.
+
+[출력]
+첫째 줄에 주어진 단어의 합의 최댓값을 출력한다.
+========================
+
+[예제 입력 1]
+2
+AAA
+AAA
+
+[예제 출력 1]
+1998
+
+------------------------
+[예제 입력 2]
+2
+GCF
+ACDEB
+
+[예제 출력 2]
+99437
+
+------------------------
+[예제 입력 3]
+10
+A
+B
+C
+D
+E
+F
+G
+H
+I
+J
+
+[예제 출력 3]
+45
+
+------------------------
+[예제 입력 4]
+2
+AB
+BA
+
+[예제 출력 4]
+187
+
+------------------------
+========================
+
+[알고리즘 분류]
+- 자료 구조
+- 그리디 알고리즘
+- 우선순위 큐
+*/
+
+/* [풀이]
+1. 모든 글자를 1로 가정했을 때의 값 더하기
+2. 내림차순 정렬
+3. 앞에서부터 9~0 할당
+4. 해당 값들 모두 곱하여 누적 값에 더하기
+*/
+
 #include <bits/stdc++.h>
 using namespace std;
 
 int main() {
     ios::sync_with_stdio(0), cin.tie(0);
     int N, digit = 9, total = 0;
+    // N : 단어 수 
+    // digit : 현재 한 글자에 배치할 수 있는 최대 숫자(9 -> 0)
+    // total : 전체 누적값(결과값)
+
     map<char, int> weight;
+    // 1. [글자 -> 현재까지 누적값] 연결하는 해시 ex) weight['c'] = 10010
+    // 2. [글자 -> 가중치] ex) weight['c'] = 9
     vector<pair<int, char>> weightV;
-    cin >> N;
-    vector<string> words(N);
-    for (int i = 0; i < N; ++i) {
-        cin >> words[i];
-        for (int j = 0; j < words[i].size(); ++j) {
-            char c = words[i][j];
-            weight[c] += pow(10, words[i].size() - j - 1);
+    // <값, 글자> 순서대로 배열(순서 : 9 -> 0)
+
+    cin >> N;    // 단어 갯수
+    
+    while(N--) { // 단어 갯수만큼 반복
+        string word;
+        cin >> word; // 단어 입력
+        for (int i = 0; i < word.size(); i++) { 
+            // 단어 길이만큼 반복
+            char c = word[i];
+            // c : 단어의 j번째 글자
+            weight[c] += pow(10, word.size() - i - 1);
+            // pow(a, b) = a^b
+            // 10의 자릿수만큼 weight에 추가
         }
     }
-    for (auto vpic : weight) weightV.push_back({ vpic.second, vpic.first });
+
+    // 정렬 위해 vector로 변환
+    // mci : Map<Char, Int> / first = char , second = int
+    for (auto mci : weight) weightV.push_back({ mci.second, mci.first });
+
+    // 모든 글자 1 기준, 가중치가 큰 순서대로 정렬
     sort(weightV.rbegin(), weightV.rend());
-    for (auto vpic : weightV) weight[vpic.second] = digit--;
-    for (string& s : words) for (char& c : s) c = weight[c] + '0';
-    for (string s : words) total += stoi(s);
+
+    // pic : Pair<Int, Char> 
+    for(auto& pic : weightV) { // 전체 가중치
+        total += (pic.first * digit--); 
+        // 전체값 += ((1 기준 가중치) * (9 -> 0 (줄어감)))
+    }
     cout << total;
 }
