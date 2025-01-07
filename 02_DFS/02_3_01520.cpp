@@ -6,8 +6,7 @@ int dx[4] = { 1, -1, 0, 0 };
 int dy[4] = { 0, 0, 1, -1 };
 int space[500][500], dp[500][500];
 
-int DFS(int cx, int cy)
-{
+int DFS(int cx, int cy) {
 	if (cx == m - 1 && cy == n - 1) return 1;
 	if (dp[cy][cx] != -1) return dp[cy][cx];
 	dp[cy][cx] = 0;
