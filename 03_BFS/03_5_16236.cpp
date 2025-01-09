@@ -1,92 +1,102 @@
+/* [풀이]
+1. 상어 기준으로 먹을 수 있는 물고기를 탐색한다.
+거리가 가까워야하므로, BFS를 사용한다.
+2. BFS를 사용할 때, 거리별로 나눠서 탐색한다.
+이는 queue의 size를 확인하여 나눌 수 있고,
+특정 거리에서 물고기가 발견되었다면 BFS는 종료한다.
+(그 이상의 거리에서 물고기가 발견되었어도 우선순위에서 밀린다.)
+3. 우선순위 큐를 활용해 우선순위를 판별하고,
+가장 높은 우선순위의 물고기만 먹는다.
+이후 우선순위 큐를 초기화한다.
+4. 기록된 거리만큼 시간이 증가된다.
+5, 먹은 물고기를 카운트하고, 그 수가 상어의 크기와 동일하다면
+상어의 크기를 키운다.
+6. 먹을 물고기가 발견되지 않는다면 프로그램을 종료한다.
+*/
 #include <bits/stdc++.h>
+#define FISH pair<int, pair<int, int>> // { 거리, { Y, X } }
+#define DIST first // 거리
+#define POS second // 위치
+#define Y first
+#define X second
 using namespace std;
 
-int n, sharkSize = 2, sharkX, sharkY, cx, cy, nx, ny, ccnt, ncnt, ate_fish, result = 0;
-int space[20][20];
-bool isVisited[20][20];
-int dx[4] = { 1, -1, 0, 0 };
-int dy[4] = { 0, 0, 1, -1 };
+int N; // 입력값
+vector<vector<int>> grid; // 입력 공간
 
-struct possible {
-	int time;
-	int x;
-	int y;
-};
+int dy[4] = { 1, -1, 0, 0 }; // BFS
+int dx[4] = { 0, 0, 1, -1 }; // BFS
 
-queue<possible> q;
-vector<possible> vp;
-possible tmpP;
+pair<int, int> shark; // 상어의 위치
+int sharkSize = 2, answer = 0;
+priority_queue<FISH, vector<FISH>, greater<FISH>> pq; 
 
-int Cmp(possible p1, possible p2) {
-	if (p1.time != p2.time) return p1.time < p2.time;
-	if (p1.y != p2.y) return p1.y < p2.y;
-	return p1.x < p2.x;
-}
+bool FindNearFish() { // 물고기 찾기 성공 유무 반환
+	int dist = 0;
+	vector<vector<bool>> isVisited(N, vector<bool>(N, false));
+	queue<pair<int, int>> q;
+	q.push(shark);
+	
+	while(!q.empty()) { // BFS
+		int qSize = q.size(); // 현재 큐의 크기만큼 반복
+		dist++; // 거리 1 증가
+		for(int s = 0; s < qSize; s++) { // s : size. dist 거리에 있는 물고기 탐색
+			int cy = q.front().Y;
+			int cx = q.front().X;
+			q.pop();
+			if(isVisited[cy][cx]) continue;
+			isVisited[cy][cx] = true;
 
-bool EatFish()
-{
-	for (int i = 0; i < 20; i++) for (int j = 0; j < 20; j++) isVisited[i][j] = false;
-	tmpP.time = 0;
-	tmpP.x = sharkX;
-	tmpP.y = sharkY;
-	q.push(tmpP);
-	while (!q.empty()) {
-		ccnt = q.front().time;
-		cx = q.front().x;
-		cy = q.front().y;
-		q.pop();
-		if (isVisited[cy][cx] == true) continue;
-		isVisited[cy][cx] = 1;
-		for (int i = 0; i < 4; i++) {
-			nx = cx + dx[i];
-			ny = cy + dy[i];
-			ncnt = ccnt + 1;
-			if (nx < 0 || nx >= n || ny < 0 || ny >= n) continue;
-			if (isVisited[ny][nx] == 1 || space[ny][nx] > sharkSize) continue;
-
-			if (space[ny][nx] == sharkSize || space[ny][nx] == 0) {
-				tmpP.time = ncnt;
-				tmpP.x = nx;
-				tmpP.y = ny;
-				q.push(tmpP);
-			}
-			else {
-				tmpP.time = ncnt;
-				tmpP.x = nx;
-				tmpP.y = ny;
-				vp.emplace_back(tmpP);
+			for(int i = 0; i < 4; i++) {
+				int ny = cy + dy[i];
+				int nx = cx + dx[i];
+				if(ny < 0 || ny >= N || nx < 0 || nx >= N) continue;
+				if(isVisited[ny][nx]) continue;
+				if(grid[ny][nx] > 0) { // 물고기 O
+					if(grid[ny][nx] < sharkSize) { // 먹을 수 있음
+						pq.push({dist, {ny, nx}});
+					}
+					else if(grid[ny][nx] == sharkSize) { // 지나갈 수 있음
+						q.push({ny, nx});
+					}
+				}
+				else q.push({ny, nx}); // 물고기 X					
 			}
 		}
+		if(!pq.empty()) return true; // 물고기가 있음
 	}
-	if (vp.empty()) return true;
-	sort(vp.begin(), vp.end(), Cmp);
-	sharkX = vp[0].x;
-	sharkY = vp[0].y;
-	space[sharkY][sharkX] = 0;
-	result += vp[0].time;
-	ate_fish++;
-	if (sharkSize == ate_fish) {
-		ate_fish = 0;
-		sharkSize++;
+	return false; // 물고기가 없음
+}
+
+void EatFish() {
+	static int eatCnt = 0; // 이 함수 내에서만 사용하지만 저장 필요 : static
+	FISH fish = pq.top(); // 최우선순위의 물고기
+	while(!pq.empty()) pq.pop(); // 나머지 비우기
+	shark = fish.POS; // 상어 위치 변경
+	answer += fish.DIST; // 거리만큼 시간 증가
+	grid[fish.POS.Y][fish.POS.X] = 0; // 물고기가 있던 공간 비우기
+
+	eatCnt++; // 먹은 갯수 추가
+	if(eatCnt == sharkSize) { // 상어 크기 == 먹은 갯수
+		eatCnt = 0; // 먹은 갯수 초기화
+		sharkSize++; // 상어 크기 증가
 	}
-	vp.clear();
-	return false;
 }
 
 int main()
 {
 	ios::sync_with_stdio(0), cin.tie(0);
-	cin >> n;
-	for (int i = 0; i < n; i++) {
-		for (int j = 0; j < n; j++) {
-			cin >> space[i][j];
-			if (space[i][j] == 9) {
-				sharkX = j;
-				sharkY = i;
-				space[i][j] = 0;
+	cin >> N;
+	grid.assign(N, vector<int>(N));
+	for(int i = 0; i < N; i++) {
+		for(int j = 0; j < N; j++) {
+			cin >> grid[i][j];
+			if(grid[i][j] == 9) { // 아기 상어라면
+				shark = { i, j }; // 위치 저장
+				grid[i][j] = 0; // 해당 위치는 0으로 초기화
 			}
 		}
 	}
-	while (!EatFish());
-	cout << result;
+	while(FindNearFish()) EatFish(); // 물고기 발견하면 먹기
+	cout << answer;
 }
