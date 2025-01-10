@@ -1,47 +1,58 @@
+/* [풀이]
+1. 퀸은 대각선 및 가로/세로 중 모두 사용한다.
+따라서 한 줄에 하나씩만 배치될 수 있으며,
+하나를 놓을 시 각 대각선은 사용할 수 없음을 표시해야 한다.
+2. 첫 줄의 0번칸부터 탐색을 시작하며, N번 칸에 도달하면 백트래킹을 종료한다.
+3. 다음 줄에서는 사용하지 않은 칸을 선택하고, 위 과정을 반복하며 해결한다.
+*/
+
 #include <bits/stdc++.h>
 using namespace std;
 
-int n, cnt = 0;
-int isUsed[15][15];
+int N, cnt = 0;
+vector<vector<bool>> isUsed(15, vector<bool>(15, false));
 bool isAllUsed;
 
 void CheckUsed(int x, int y, bool isPlus) {
-	for (int i = y + 1; i < n; i++) {
-		for (int j = 0; j < n; j++) {
-			if (j == x || y - x == i - j || x + y == i + j) {
-				if (isPlus) isUsed[i][j]++;
-				else isUsed[i][j]--;
+	for (int i = y + 1; i < N; i++) {
+		for (int j = 0; j < N; j++) {
+			// 같은 위치 및 대각선에 사용/취소 여부 기록
+			if (j == x || y - x == i - j || x + y == i + j) { 
+				if (isPlus) isUsed[i][j] = true; // 사용 중이면 숫자 더하기
+				else isUsed[i][j] = false; // 미사용 중이면 숫자 빼기
 			}
 		}
 	}
 }
 
 void BackTracking(int idx) {
-	if (idx == n)	{
-		cnt++;
+	if (idx == N)	{
+		cnt++; // N개를 했다면 성공. 갯수 추가 후 반환
 		return;
 	}
+
+	// 다음 줄의 모든 칸에 접근이 불가능한지 확인
 	isAllUsed = true;
-	for (int i = 0; i < n; i++) {
-		if (isUsed[idx + 1][i] == 0) {
+	for (int i = 0; i < N; i++) {
+		if (isUsed[idx + 1][i] == false) {
 			isAllUsed = false;
 			break;
 		}
 	}
-	if (isAllUsed) return;
+	if (isAllUsed) return; // 불가능하면 함수 종료
 
-	for (int i = 0; i < n; i++) {
+	for (int i = 0; i < N; i++) {
 		if (isUsed[idx][i] == 0) {
-			CheckUsed(i, idx, true);
-			BackTracking(idx + 1);
-			CheckUsed(i, idx, false);
+			CheckUsed(i, idx, true); // 현재 칸 체크 후
+			BackTracking(idx + 1); // 백트래킹 시도
+			CheckUsed(i, idx, false); // 현재 칸 체크 취소
 		}
 	}
 }
 
 int main() {
 	ios::sync_with_stdio(0), cin.tie(0);
-	cin >> n;
+	cin >> N;
 	BackTracking(0);
 	cout << cnt;
 }
