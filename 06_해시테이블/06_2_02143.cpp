@@ -38,7 +38,6 @@ int main()
 		bSubSum[i] = bSubSum[i - 1] + B[i];
 	}
 	
-	int cnt = 0;
 	for (int i = 1; i <= n; i++) { // a map에 저장
 		for (int j = i; j <= n; j++) {
 			aTotal[FindSubArr(i, j, true)]++;
