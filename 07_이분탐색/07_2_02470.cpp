@@ -1,34 +1,32 @@
+/* [풀이]
+1. 오름차순으로 정렬한다.
+2. 일반적인 이분탐색에서 mid 대신 abs(arr[l] + arr[r])을 사용한다.
+3. 최적의 값을 bestR, bestL에 기록한다.
+*/
+
 #include <bits/stdc++.h>
 using namespace std;
 
+int N;
+
 int main()
 {
-	ios::sync_with_stdio(0), cin.tie(0);
-	int n, min, max, near0 = INT_MAX, bestLeft, bestRight, left;
-	cin >> n;
-	vector<int> arr(n);
-	for (int& i : arr) cin >> i;
-	sort(arr.begin(), arr.end());
-    bestLeft = 0, bestRight = 1;
+    ios::sync_with_stdio(0), cin.tie(0);
+    cin >> N;
+    vector<int> arr(N);
+    for (int& i : arr) cin >> i;
+    sort(arr.begin(), arr.end());
 
-    for (int i = 0; i < n - 1; i++) {
-        left = arr[i];
-        auto it = lower_bound(arr.begin() + i + 1, arr.end(), -left);
-
-        if (it != arr.end() && abs(left + *it) < abs(near0)) {
-            near0 = left + *it;
-            bestLeft = left;
-            bestRight = *it;
+    int l = 0, r = N - 1;
+    int bestL = 0, bestR = N - 1;
+    while (l < r) {
+        if (abs(arr[l] + arr[r]) < abs(arr[bestL] + arr[bestR])) {
+            bestL = l;
+            bestR = r;
         }
-        if (it != arr.begin() + i + 1) {
-            it--;
-            if (abs(left + *it) < abs(near0)) {
-                near0 = left + *it;
-                bestLeft = left;
-                bestRight = *it;
-            }
-        }
+        if (arr[l] + arr[r] == 0) break;
+        else if (arr[l] + arr[r] < 0) l++;
+        else r--;
     }
-    if (bestLeft > bestRight) swap(bestLeft, bestRight);
-    cout << bestLeft << " " << bestRight;
+    cout << arr[bestL] << " " << arr[bestR];
 }
