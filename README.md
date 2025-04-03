@@ -117,7 +117,7 @@ C++ 알고리즘 플이의 핵심입니다.<br>
 #include <vector> // <vector> 헤더에 포함 
 using namespace std; // std::vector로 사용해야 함
 ```
-헤더는 <vector>이며, std namespace에 포함되어 있습니다.<br>
+헤더는 `<vector>`이며, std namespace에 포함되어 있습니다.<br>
 
 ```cpp
 vector<int> v;          // int형 빈 벡터 생성
