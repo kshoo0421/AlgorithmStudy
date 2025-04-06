@@ -1,29 +1,23 @@
-/* [풀이]
-1. 서로가 연결된 백트래킹 문제. 다음 이동을 link로 하면 일반 백트래킹과 동일하다.
-2. 방문 여부를 표시하고, 다음 사람으로 넘어간다.
-이미 방문한 사람이라면 취소하고, 방문하지 않은 사람이면 표시 후 다음으로 넘어간다.
-3. 5명을 넘겼다면 성공, 넘긴 적이 한 번도 없다면 실패이다.
-*/
 #include <bits/stdc++.h>
 using namespace std;
 
 bool isFin = false;
 int N, M, cnt = 0;
-vector<bool> isVisited; // 방문 여부 확인
-vector<vector<int>> linked; // 해당 인물이 어떤 친구들과 연결되어 있는지 확인
+vector<bool> isVisited;
+vector<vector<int>> linked;
 
-void BackTracking(int a) { // 백트래킹으로 총 5명이 연결되는지 확인
-	if (isFin) return; // 이미 끝났다면 종료
+void BackTracking(int a) {
+	if (isFin) return;
 	if (isVisited[a]) return;
-	isVisited[a] = true; // 방문 여부 추가
-	cnt++; // 갯수 늘리기
-	if (cnt == 5) isFin = true; // 5명 연결되었으면 종료 가능
+	isVisited[a] = true;
+	cnt++;
+	if (cnt == 5) isFin = true;
 
 	for (int i : linked[a]) {
 		BackTracking(i);
 	}
-	isVisited[a] = false; // 방문 취소
-	cnt--; // 갯수 줄이기
+	isVisited[a] = false;
+	cnt--;
 	return;
 }
 
