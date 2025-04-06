@@ -1,7 +1,3 @@
-/* [풀이]
-1. 3차원 BFS를 진행한다. dz를 추가하고, 방향을 총 6가지로 설정한다.
-(상, 하, 좌, 우, 전, 후)
-*/
 #include <bits/stdc++.h>
 using namespace std;
 
@@ -14,7 +10,6 @@ int main() {
     int M, N, H;
     cin >> M >> N >> H;
 
-    // 3중 벡터
     vector<vector<vector<int>>> box(H, vector<vector<int>>(N, vector<int>(M)));
     queue<vector<int>> q;
 
@@ -27,14 +22,13 @@ int main() {
         }
     }
 
-    // BFS
     int days = 0;
     while (!q.empty()) {
         int size = q.size();
-        bool ripened = false; // 익었는지 유무 확인
+        bool ripened = false;
 
         for (int i = 0; i < size; i++) {
-            auto cur = q.front(); // [0] : z / [1] : y / [2] : x
+            auto cur = q.front();
             q.pop();
             for (int j = 0; j < 6; j++) {
                 int nz = cur[0] + dz[j];
