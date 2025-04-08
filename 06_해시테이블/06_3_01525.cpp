@@ -1,8 +1,3 @@
-/* [풀이]
-1. 경로를 string으로 바꿔서 저장 후 unordered_set으로 중복 제거
-2. BFS로 하나씩 탐색. 최종 목표에 도달하면 종료
-*/
-
 #include <bits/stdc++.h>
 #define STR first
 #define CNT second
