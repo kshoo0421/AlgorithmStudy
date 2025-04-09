@@ -141,6 +141,11 @@ vector<int> c = a;        // 동일한 복사
 vector<vector<int>> matrix(3, vector<int>(4, 0)); 
 // 3행 4열, 모든 값이 0으로 초기화된 2차원 벡터
 
+/* 선언 후 초기화 방법 */
+vector<int> A;
+A.assign(size, 0); // 길이와 값 명시
+A.resize(size); // 길이만 변경하고 싶으면 resize() 사용
+
 ```
 `vector`의 초기화 방법입니다.<br>
 예시는 모두 int로 들었지만, `string`, `bool` 등 다른 자료형도 모두 가능합니다.<br>
