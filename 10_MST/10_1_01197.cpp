@@ -1,6 +1,3 @@
-/* [풀이]
-1. 정석적인 MST. 유니온 파인드를 활용한 크루스칼 알고리즘 구현
-*/
 #include <bits/stdc++.h>
 using namespace std;
 
