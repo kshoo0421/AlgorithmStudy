@@ -6,14 +6,14 @@ using namespace std;
 int main()
 {
 	ios::sync_with_stdio(0), cin.tie(0);
-	int n, m, r;
-	cin >> n >> m >> r;
-	vector<int> item(n);
+	int N, M, R;
+	cin >> N >> M >> R;
+	vector<int> item(N);
 	for (int& i : item) cin >> i;
 
-	vector<vector<int>> dist(n, vector<int>(n, INF));
-	for (int i = 0; i < n; i++) dist[i][i] = 0;
-	while (r--) {
+	vector<vector<int>> dist(N, vector<int>(N, INF));
+	for (int i = 0; i < N; i++) dist[i][i] = 0;
+	while (R--) {
 		int a, b, l;
 		cin >> a >> b >> l;
 		dist[a - 1][b - 1] = min(dist[a - 1][b - 1], l);
@@ -21,9 +21,9 @@ int main()
 	}
 
 	function<void()> Floyd = [&]() {
-		for (int k = 0; k < n; k++) {
-			for (int i = 0; i < n; i++) {
-				for (int j = 0; j < n; j++) {
+		for (int k = 0; k < N; k++) {
+			for (int i = 0; i < N; i++) {
+				for (int j = 0; j < N; j++) {
 					dist[i][j] = min(dist[i][j], dist[i][k] + dist[k][j]);
 				}
 			}
@@ -32,10 +32,10 @@ int main()
 
 	Floyd();
 	int answer = 0;
-	for (int i = 0; i < n; i++) {
+	for (int i = 0; i < N; i++) {
 		int cnt = 0;
-		for (int j = 0; j < n; j++) {
-			if (dist[i][j] <= m) {
+		for (int j = 0; j < N; j++) {
+			if (dist[i][j] <= M) {
 				cnt += item[j];
 			}
 		}

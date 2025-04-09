@@ -27,13 +27,13 @@ int main()
 
 	Floyd();
 
-	int result = 0;
+	int answer = 0;
 	for (int i = 0; i < N; i++) {
 		int cnt = 0;
 		for (int j = 0; j < N; j++) {
 			if (dist[i][j] || dist[j][i]) cnt++;
 		}
-		if (cnt == N - 1) result++;
+		if (cnt == N - 1) answer++;
 	}
-	cout << result;
+	cout << answer;
 }
