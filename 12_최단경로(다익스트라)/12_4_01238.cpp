@@ -1,7 +1,5 @@
 #include <bits/stdc++.h>
 #define MAX 1e9
-#define DIS first;
-#define POS second
 using namespace std;
 
 vector<int> Dijkstra(int start, int N, vector<vector<pair<int, int>>>& graph) {
@@ -12,15 +10,12 @@ vector<int> Dijkstra(int start, int N, vector<vector<pair<int, int>>>& graph) {
     pq.push({ 0, start });
 
     while (!pq.empty()) {
-        int cDist = pq.top().DIS;
-        int cPos = pq.top().POS;
+        auto [cDist, cPos] = pq.top();
         pq.pop();
 
         if (cDist > dist[cPos]) continue;
 
-        for (auto& p : graph[cPos]) {
-            int nDist = p.DIS;
-            int nPos = p.POS;
+        for (auto [nDist, nPos] : graph[cPos]) {
             int cost = cDist + nDist;
             if (cost < dist[nPos]) {
                 dist[nPos] = cost;

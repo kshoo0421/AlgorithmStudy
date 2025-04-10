@@ -1,56 +1,56 @@
 #include <bits/stdc++.h>
-#define MAX 2000000000
+#define MAX 1e9
 using namespace std;
-
-int N, E;
-vector<vector<int>> dist;
-
-int shortestPath(int start, int dest) {
-	if (start == dest) return 0;
-	int cur = start, minVal, minPos;
-	vector<int> path(N, MAX);
-	vector<int> done(1, start);
-	path[start] = 0;
-
-	while (1) {
-		minVal = MAX;
-		minPos = -1;
-		for (int i : done) {
-			for (int j = 0; j < N; j++) {
-				if (i == j) continue;
-				if (path[j] == MAX && path[i] + dist[i][j] < minVal) {
-					minVal = path[i] + dist[i][j];
-					minPos = j;
-				}
-			}
-		}
-		if (minPos == -1) return MAX;
-		path[minPos] = minVal;
-		done.emplace_back(minPos);
-		if (minPos == dest) break;
-	}
-	return path[dest];
-}
-
 
 int main()
 {
 	ios::sync_with_stdio(0), cin.tie(0);
-	int a, b, c, v1, v2, result = 0;
+	int N, E;
 	cin >> N >> E;
-	dist.assign(N, vector<int>(N, MAX));
-	for (int i = 0; i < E; i++) {
+	vector<vector<pair<int, int>>> next(N + 1);
+	while (E--) {
+		int a, b, c;
 		cin >> a >> b >> c;
-		dist[a - 1][b - 1] = c;
-		dist[b - 1][a - 1] = c;
-	}	
+		next[a].push_back({ b, c });
+		next[b].push_back({ a, c });
+	}
+	int v1, v2;
 	cin >> v1 >> v2;
-	int sToV1 = shortestPath(0, v1 - 1);
-	int sToV2 = shortestPath(0, v2 - 1);
-	int v1ToV2 = shortestPath(v1 - 1, v2 - 1);
-	int v1ToE = shortestPath(v1 - 1, N - 1);
-	int v2ToE = shortestPath(v2 - 1, N - 1);
-	result = v1ToV2 + min(sToV1 + v2ToE, sToV2 + v1ToE);
-	if (sToV1 == MAX || sToV2 == MAX || v1ToV2 == MAX || v1ToE == MAX || v2ToE == MAX) result = -1;
-	cout << result;
+
+	auto Dijkstra = [&](int start, int end) {
+		vector<int> dist(N + 1, MAX);
+		dist[start] = 0;
+
+		priority_queue<pair<int, int>, vector<pair<int, int>>, greater<pair<int, int>>> pq;
+		pq.push({ 0, start });
+		
+		while (!pq.empty()) {
+			auto [cDist, cPos] = pq.top();
+			pq.pop();
+			if (dist[cPos] != cDist) continue;
+			if (cPos == end) break;
+			for (auto [nPos, weight] : next[cPos]) {
+				if (cDist + weight < dist[nPos]) {
+					dist[nPos] = cDist + weight;
+					pq.push({ dist[nPos], nPos });
+				}
+			}
+		}
+		return dist[end];
+		};
+
+	int _v1 = Dijkstra(1, v1);
+	int _v2 = Dijkstra(1, v2);
+	int v1_v2 = Dijkstra(v1, v2);
+	int v1_N = Dijkstra(v1, N);
+	int v2_N = Dijkstra(v2, N);
+
+	if (_v1 == MAX || _v2 == MAX || v1_v2 == MAX || v1_N == MAX || v2_N == MAX) {
+		cout << "-1";
+	}
+	else {
+		int v1_v2_N = _v1 + v1_v2 + v2_N;
+		int v2_v1_N = _v2 + v1_v2 + v1_N;
+		cout << min(v1_v2_N, v2_v1_N);
+	}
 }
