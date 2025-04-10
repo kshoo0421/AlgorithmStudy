@@ -1,43 +1,25 @@
 #include <bits/stdc++.h>
-#define MAX 200000
 using namespace std;
 
 int main()
 {
 	ios::sync_with_stdio(0), cin.tie(0);
-	int n, k, cur;
-	cin >> n >> k;
-	
-	vector<int> subin(100001, MAX);
-	queue<int> q;
-	q.push(n);
-	subin[n] = 0;
-
-	while (!q.empty())
-	{
-		cur = q.front();
-		q.pop();
-
-		if(cur > 0) {
-			if (subin[cur - 1] > subin[cur] + 1) {
-				subin[cur - 1] = subin[cur] + 1;
-				q.push(cur - 1);
-			}
+	int N, K;
+	cin >> N >> K;
+	vector<bool> isVisited(100001, false);
+	priority_queue<pair<int, int>, vector<pair<int, int>>, greater<pair<int, int>>> pq;
+	pq.push({ 0, N });
+	while (!pq.empty()) {
+		auto [time, cur] = pq.top();
+		pq.pop();
+		if (isVisited[cur]) continue;
+		isVisited[cur] = true;
+		if (cur == K) {
+			cout << time;
+			return 0;
 		}
-
-		if (cur < 100000) {
-			if (subin[cur + 1] > subin[cur] + 1) {
-				subin[cur + 1] = subin[cur] + 1;
-				q.push(cur + 1);
-			}
-		}
-
-		if (cur <= 50000) {
-			if (subin[cur * 2] > subin[cur]) {
-				subin[cur * 2] = subin[cur];
-				q.push(cur * 2);
-			}
-		}
+		if (cur + 1 <= 100000) pq.push({ time + 1, cur + 1 });
+		if (cur - 1 >= 0) pq.push({ time + 1, cur - 1 });
+		if (cur * 2 <= 100000) pq.push({ time, cur * 2 });
 	}
-	cout << subin[k];
 }
