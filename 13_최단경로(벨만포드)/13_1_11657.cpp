@@ -1,7 +1,4 @@
 #include <bits/stdc++.h>
-#define U 0
-#define V 1
-#define W 2
 #define MAX 1e9
 #define LL long long
 using namespace std;
