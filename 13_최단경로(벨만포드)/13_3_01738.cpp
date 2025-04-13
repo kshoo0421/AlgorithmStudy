@@ -46,14 +46,14 @@ bool BellmanFord() {
         }
     }
 
-    vector<int> neg_cycle_nodes;
+    vector<int> negCycleNodes;
     for (auto& [u, v, w] : edges) {
         if (dist[u] != MIN && dist[v] < dist[u] + w) {
-            neg_cycle_nodes.push_back(v);
+            negCycleNodes.push_back(v);
         }
     }
 
-    if ((!neg_cycle_nodes.empty() && CanReachN(neg_cycle_nodes))
+    if ((!negCycleNodes.empty() && CanReachN(negCycleNodes))
         || dist[N] == MIN) {
         cout << -1;
         return false;
