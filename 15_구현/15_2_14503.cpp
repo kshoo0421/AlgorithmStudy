@@ -50,5 +50,4 @@ int main()
 		if (isFin) break;
 	}
 	cout << cnt;
-	return 0;
 }
